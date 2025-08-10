@@ -4,7 +4,7 @@ data = {
     'return' : 'apple_music,spotify'
 }
 files = {
-    'file' : open('')
+    'file' : open('./Sarah.mp3', 'rb')
 }
 result = requests.post('https://api.audd.io/', data=data, files=files)
 print(result.text)

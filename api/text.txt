@@ -1,0 +1,7 @@
+Get /v1
+
+curl --request GET \
+  --url https://api.spotify.com/v1/me/player/currently-playing \
+  --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
+
+  https://open.spotify.com/album/1jzv3jwZbt8lYfEtMjiD1R?si=PTSOmpTKQEyaXCRrMK0cxA

@@ -1,5 +1,9 @@
 import requests 
+import json
+import drivers
+from time import sleep
 
+display = drivers.Lcd()
 data = {
     'api_token': 'd30173a93f26680235ebfcf4454e370a',
     'return': 'apple_music,spotify'
@@ -7,22 +11,45 @@ data = {
 files = {
     'file': open('./02-mamacita.mp3', 'rb')
 }
+result = requests.post('https://api.audd.io/', data=data, files=files)
 
-# Make request
-response = requests.post('https://api.audd.io/', data=data, files=files)
+response_json = json.loads(result.text)
 
-# Convert to JSON
-json_data = response.json()
-print(json_data)
-# Extract artwork URL template
-artwork_url = json_data["result"]["apple_music"]["artwork"]["url"]
+artist = response_json['result']['artist']
+title = response_json['result']['title']
 
-# Replace placeholders with actual size
-cover_url = artwork_url.replace("{w}", "1000").replace("{h}", "1000")
+# artist = "Tyler The Creator"
+# title = "New Magic Wand and your mom"
+print(artist)
+print(title)
 
-# Download the image
-img_data = requests.get(cover_url).content
-with open("album_cover.jpg", "wb") as handler:
-    handler.write(img_data)
 
-print("Album cover saved as album_cover.jpg")
+try:
+    def displaying(display, text='', num_line=1, num_cols=16):
+        if len(text) > num_cols:
+            display.lcd_display_string(text[:num_cols], num_line)
+            sleep(1)
+            for i in range(len(text) - num_cols + 1):
+                text_to_print = text[i:i+num_cols]
+                display.lcd_display_string(text_to_print, num_line)
+                sleep(0.5)
+            sleep(1)
+        else:
+            display.lcd_display_string(text, num_line)
+    
+    displaying(display, artist, 1)
+    displaying(display, title, 2)
+
+    if len(artist) > 16 and len(title) <= 16:
+        while True:
+            displaying(display, artist, 1)
+    
+    if len(artist) > 16 and len(title) > 16:
+        while True:
+            displaying(display, artist, 1)
+            displaying(display, title, 2)
+
+except KeyboardInterrupt:
+    display.lcd_clear()
+
+
